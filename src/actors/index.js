@@ -57,3 +57,37 @@ const pieCaseActor = {
     }
   },
 };
+
+const actorSystem = start();
+
+let pieCase = start_actor(actorSystem, "pie-case", pieCaseActor, {
+  slices: ["apple", "peach", "cherry"],
+});
+
+let waiter = start_actor(actorSystem, "waiter", waiterActor, {
+  pieCase: pieCase,
+});
+
+let c1 = start_actor(actorSystem, "customer1", customerActor, {
+  waiter: waiter,
+});
+let c2 = start_actor(actorSystem, "customer2", customerActor, {
+  waiter: waiter,
+});
+
+dispatch(c1, { type: "hungry for pie", waiter: waiter });
+dispatch(c2, { type: "hungry for pie", waiter: waiter });
+dispatch(c1, { type: "hungry for pie", waiter: waiter });
+dispatch(c2, { type: "hungry for pie", waiter: waiter });
+dispatch(c1, { type: "hungry for pie", waiter: waiter });
+
+sleep(500).then(() => {
+  stop(actorSystem);
+});
+
+
+// In the actor model, there’s no need to write any 
+// code to handle concurrency, as there is no shared state.
+// There’s also no need to code in explicit end-to-end “do this,
+// do that” logic, as the actors work it out for themselves based on 
+// the messages they receive.
