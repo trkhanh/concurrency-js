@@ -35,3 +35,25 @@ const waiterActor = {
     );
   },
 };
+
+const pieCaseActor = {
+  "get slice": (msg, context, state) => {
+    if (state.slices.length == 0) {
+      dispatch(msg.waiter, {
+        type: "error",
+        msg: "no pie left",
+        customer: msg.customer,
+      });
+      return state;
+    } else {
+      var slice = state.slices.shift() + " pie slice";
+      dispatch(msg.customer, { type: "put on table", food: slice });
+      dispatch(msg.waiter, {
+        type: "add to order",
+        food: slice,
+        customer: msg.customer,
+      });
+      return state;
+    }
+  },
+};
